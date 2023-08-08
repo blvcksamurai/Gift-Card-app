@@ -1,0 +1,88 @@
+name: gift_card_app
+description: A Gift Card App with flutter and Riverpod
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.5 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.2
+  flutter_svg: ^2.0.7
+  flutter_hooks: ^0.20.0
+  hooks_riverpod: ^2.3.7
+  intl: ^0.18.1
+  riverpod_annotation: ^2.1.1
+  uuid: ^3.0.7
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner:
+  flutter_gen_runner:
+
+flutter_gen:
+  colors:
+    inputs:
+      - assets/colors.xml
+
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/cards/
+    - assets/icons/
+  # To add assets to your application, add an assets section, like this:
+  # assets:
+  #   - images/a_dot_burr.jpeg
+  #   - images/a_dot_ham.jpeg
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  fonts:
+    - family: Merriweather
+      fonts:
+        - asset: assets/fonts/merriweather/Merriweather-Regular.ttf
+        - asset: assets/fonts/merriweather/Merriweather-Italic.ttf
+          style: italic
+        - asset: assets/fonts/merriweather/Merriweather-Light.ttf
+          weight: 300
+        - asset: assets/fonts/merriweather/Merriweather-LightItalic.ttf
+          weight: 300
+          style: italic
+        - asset: assets/fonts/merriweather/Merriweather-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/merriweather/Merriweather-BoldItalic.ttf
+          weight: 700
+          style: italic
+        - asset: assets/fonts/merriweather/Merriweather-Black.ttf
+          weight: 900
+        - asset: assets/fonts/merriweather/Merriweather-BlackItalic.ttf
+          weight: 900
+          style: italic
+    - family: Playfair
+      fonts:
+        - asset: assets/fonts/playfair/PlayfairDisplay-Regular.ttf
+        - asset: assets/fonts/playfair/PlayfairDisplay-Italic.ttf
+          style: italic
+        - asset: assets/fonts/playfair/PlayfairDisplay-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/playfair/PlayfairDisplay-BoldItalic.ttf
+          weight: 700
+          style: italic
+        - asset: assets/fonts/playfair/PlayfairDisplay-Black.ttf
+          weight: 900
+        - asset: assets/fonts/playfair/PlayfairDisplay-BlackItalic.ttf
+          weight: 900
+          style: italic
