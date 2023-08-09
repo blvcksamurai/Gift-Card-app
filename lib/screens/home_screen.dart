@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:gift_card_app/gen/colors.gen.dart';
-import 'package:gift_card_app/gen/fonts.gen.dart';
 import 'package:gift_card_app/models/card_model.dart';
+import 'package:gift_card_app/providers/filtered_cards_provider.dart';
+import 'package:gift_card_app/repositories/card_repository.dart';
+import 'package:gift_card_app/utilities/card_category_extension.dart';
+import 'package:gift_card_app/widgets/custom_bottom_nav_bar.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../widgets/app_text.dart';
+import '../widgets/custom_chip.dart';
+import '../widgets/custom_gift_card.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -20,6 +26,7 @@ class HomeScreen extends StatelessWidget {
               "Get Griddy",
             ),
           )),
+      bottomNavigationBar: CustomNavBar(index: 0),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
@@ -27,9 +34,9 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 10),
             _SearchBar(),
             const SizedBox(height: 10),
-            _CategoryFilter(
-              label: '',
-            ),
+            _CategoryFilter(),
+            const SizedBox(height: 10),
+            _CardGrid(),
           ],
         ),
       ),
@@ -59,9 +66,9 @@ class _SearchBar extends StatelessWidget {
 }
 
 class _CategoryFilter extends StatelessWidget {
-  final String label;
-
-  const _CategoryFilter({super.key, required this.label});
+  const _CategoryFilter({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +79,7 @@ class _CategoryFilter extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         children: [
           ...CardCategory.values.map((category) => CustomChip(
-                label: category.name,
+                label: category.capitalName(),
               ))
         ],
       ),
@@ -80,27 +87,45 @@ class _CategoryFilter extends StatelessWidget {
   }
 }
 
-class CustomChip extends StatelessWidget {
-  final String label;
-  bool isSelected;
-  CustomChip({
-    super.key,
-    required this.label,
-    this.isSelected = false,
-  });
+class _CardGrid extends ConsumerWidget {
+  const _CardGrid({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(right: 10.0),
-      padding: const EdgeInsets.symmetric(
-        horizontal: 20.0,
-        vertical: 5.0,
-      ),
-      decoration: BoxDecoration(
-          color: isSelected ? ColorName.primaryColor : ColorName.disabledGrey,
-          borderRadius: BorderRadius.circular(50.0)),
-      child: Center(child: AppText.small(label)),
-    );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final size = MediaQuery.of(context).size;
+    final cards = ref.watch(filteredCardsProvider);
+
+    return cards.when(
+        loading: () => Center(
+              child: CircularProgressIndicator(),
+            ),
+        data: (cards) =>
+
+            // final CardRepository cardRepository = ref.watch(cardRepositoryProvider);
+            // var allCards = cardRepository.getAllCards();
+
+            SizedBox(
+              height: size.height * 0.65,
+              child: GridView.builder(
+                shrinkWrap: true,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 10.0,
+                  childAspectRatio: 0.75,
+                ),
+                itemCount: cards.length,
+                itemBuilder: (context, index) {
+                  return Center(
+                    child: CustomGiftCard(
+                      card: cards[index],
+                      width: size.width * 0.425,
+                    ),
+                  );
+                },
+              ),
+            ),
+        error: (error, stackTrace) => Center(
+              child: AppText.medium("Failed to fetch card"),
+            ));
   }
 }
