@@ -15,4 +15,7 @@ class FontFamily {
 
   /// Font family: Playfair
   static const String playfair = 'Playfair';
+
+  /// Font family: Raleway
+  static const String raleway = 'Raleway';
 }
