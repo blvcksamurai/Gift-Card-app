@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gift_card_app/gen/colors.gen.dart';
 import 'package:gift_card_app/models/card_model.dart';
 import 'package:gift_card_app/providers/filtered_cards_provider.dart';
+import 'package:gift_card_app/providers/search_query_provider.dart';
+import 'package:gift_card_app/providers/selected_category_provider.dart';
 import 'package:gift_card_app/repositories/card_repository.dart';
 import 'package:gift_card_app/utilities/card_category_extension.dart';
 import 'package:gift_card_app/widgets/custom_bottom_nav_bar.dart';
@@ -11,11 +13,11 @@ import '../widgets/app_text.dart';
 import '../widgets/custom_chip.dart';
 import '../widgets/custom_gift_card.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
           elevation: 0.0,
@@ -29,7 +31,7 @@ class HomeScreen extends StatelessWidget {
       bottomNavigationBar: CustomNavBar(index: 0),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        child: Column(
+        child: ListView(
           children: [
             const SizedBox(height: 10),
             _SearchBar(),
@@ -44,11 +46,11 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class _SearchBar extends StatelessWidget {
+class _SearchBar extends ConsumerWidget {
   const _SearchBar({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Flexible(
         child: TextFormField(
       decoration: InputDecoration(
@@ -60,27 +62,40 @@ class _SearchBar extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             borderSide: BorderSide.none),
       ),
-      onChanged: (value) {},
+      onChanged: ref.read(searchQueryProvider.notifier).onChange,
     ));
   }
 }
 
-class _CategoryFilter extends StatelessWidget {
+class _CategoryFilter extends ConsumerWidget {
   const _CategoryFilter({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedCategory = ref.watch(selectedCategoryProvider);
+
     return SizedBox(
       height: 30,
       child: ListView(
         shrinkWrap: true,
         scrollDirection: Axis.horizontal,
         children: [
-          ...CardCategory.values.map((category) => CustomChip(
-                label: category.capitalName(),
-              ))
+          ...CardCategory.values.map(
+            (category) => CustomChip(
+              label: category.capitalName(),
+              isSelected: selectedCategory == category,
+              onTap: () {
+                ref
+                    .read(selectedCategoryProvider.notifier)
+                    .setSelectedCategory(category);
+              },
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          )
         ],
       ),
     );
